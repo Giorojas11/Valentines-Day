@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>You Said Yes 😍</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: #ff4d6d;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
+    }
+
+    img {
+      max-width: 280px;
+      border-radius: 15px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <h1>YOU SAID YES 😭💖</h1>
+    <p>No takebacks.</p>
+
+    <img src="https://i.imgflip.com/2tpqpw.jpg" alt="funny meme">
+
+    <!-- Music -->
+    <audio id="music" autoplay loop>
+      <source src="music.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <script>
+    // Confetti burst loop
+    const end = Date.now() + 3000;
+
+    (function frame() {
+      confetti({
+        particleCount: 6,
+        spread: 70,
+        origin: { x: Math.random(), y: Math.random() - 0.2 }
+      });
+      if (Date.now() < end) requestAnimationFrame(frame);
+    })();
+  </script>
+</body>
+</html>
