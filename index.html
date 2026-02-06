@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -20,6 +20,7 @@
       color: white;
       text-align: center;
       overflow: hidden;
+      position: relative;
     }
 
     .card {
@@ -36,18 +37,21 @@
       border-radius: 10px;
       cursor: pointer;
       margin: 10px;
+      position: relative;
+      z-index: 10;
+      transition: transform 0.1s;
     }
 
     #yesBtn {
       background: #ff4d6d;
       color: white;
-      transition: transform 0.2s;
     }
 
     #noBtn {
       background: #444;
       color: white;
       position: absolute;
+      z-index: 20;
     }
   </style>
 </head>
@@ -55,7 +59,6 @@
 <body>
   <div class="card">
     <h1>Will you be my Valentine? 💖</h1>
-
     <button id="yesBtn">Yes 💘</button>
     <button id="noBtn">No 😤</button>
   </div>
@@ -65,33 +68,63 @@
     const noBtn = document.getElementById("noBtn");
     let yesScale = 1;
 
-    function teleportNo() {
-      const x = Math.random() * (window.innerWidth - 120);
-      const y = Math.random() * (window.innerHeight - 60);
-
-      noBtn.style.left = `${x}px`;
-      noBtn.style.top = `${y}px`;
-
-      yesScale += 0.15;
-      yesBtn.style.transform = `scale(${yesScale})`;
+    // YES grows when called
+    function growYes() {
+        yesScale += 0.2;
+        yesBtn.style.transform = `scale(${yesScale})`;
     }
 
-    // Works for mouse AND touch
-    noBtn.addEventListener("mouseenter", teleportNo);
-    noBtn.addEventListener("touchstart", teleportNo);
+    // Optional: YES grows on hover
+    yesBtn.addEventListener("mouseenter", growYes);
 
+    // Initialize NO button somewhere visible
+    noBtn.style.left = "60%";
+    noBtn.style.top = "50%";
+
+    // NO button chases cursor
+    document.addEventListener("mousemove", (e) => {
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+
+      const btnRect = noBtn.getBoundingClientRect();
+      const btnX = btnRect.left + btnRect.width / 2;
+      const btnY = btnRect.top + btnRect.height / 2;
+
+      const distance = Math.hypot(mouseX - btnX, mouseY - btnY);
+
+      if (distance < 150) {
+        const dx = btnX - mouseX;
+        const dy = btnY - mouseY;
+
+        const factor = 0.5; // speed
+        let newX = btnRect.left + dx * factor;
+        let newY = btnRect.top + dy * factor;
+
+        // Keep NO inside viewport
+        newX = Math.min(window.innerWidth - noBtn.offsetWidth, Math.max(0, newX));
+        newY = Math.min(window.innerHeight - noBtn.offsetHeight, Math.max(0, newY));
+
+        noBtn.style.left = `${newX}px`;
+        noBtn.style.top = `${newY}px`;
+
+        growYes();
+      }
+    });
+
+    // Confetti on YES click
     yesBtn.addEventListener("click", () => {
-      confetti({
-        particleCount: 160,
-        spread: 90,
-        origin: { y: 0.6 }
-      });
+        confetti({
+            particleCount: 1000,
+            spread: 150,
+            origin: { y: 0.6 }
+        });
 
-      setTimeout(() => {
-        window.location.href = "yes.html";
-      }, 700);
+        setTimeout(() => {
+            window.location.href = "yes.html";
+        }, 700);
     });
   </script>
 </body>
 </html>
+
 
