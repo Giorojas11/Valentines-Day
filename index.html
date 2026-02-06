@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Be My Valentine 💘</title>
+<title>Megan, Be My Valentine 💘</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -38,12 +38,12 @@
     margin: 10px;
     position: relative;
     z-index: 10;
+    transition: transform 0.05s linear;
   }
 
   #yesBtn {
     background: #ff4d6d;
     color: white;
-    transition: transform 0.1s;
   }
 
   #noBtn {
@@ -68,49 +68,48 @@ const noBtn = document.getElementById("noBtn");
 
 let yesScale = 1;
 
-// Initialize NO button in center-ish
-noBtn.style.left = "50%";
-noBtn.style.top = "60%";
-
-// Make YES grow gradually over time
+// YES grows automatically over time
 setInterval(() => {
-  yesScale += 0.02; // grows slowly
+  yesScale += 0.05; // adjust growth speed
   yesBtn.style.transform = `scale(${yesScale})`;
-}, 100); // every 100ms
+}, 100); // grows every 100ms
 
-// Smooth chasing NO button
+// Initialize NO button inside viewport
+let noX = window.innerWidth / 2;
+let noY = window.innerHeight / 2;
+noBtn.style.left = `${noX}px`;
+noBtn.style.top = `${noY}px`;
+
+// Track cursor
 let mouseX = 0;
 let mouseY = 0;
-
 document.addEventListener("mousemove", (e) => {
   mouseX = e.clientX;
   mouseY = e.clientY;
 });
 
-// Animate NO button each frame
+// Smoothly move NO button away from cursor
 function animateNo() {
-  const btnRect = noBtn.getBoundingClientRect();
-  const btnX = btnRect.left + btnRect.width / 2;
-  const btnY = btnRect.top + btnRect.height / 2;
+  const btnWidth = noBtn.offsetWidth;
+  const btnHeight = noBtn.offsetHeight;
 
-  const dx = btnX - mouseX;
-  const dy = btnY - mouseY;
+  const dx = noX + btnWidth/2 - mouseX;
+  const dy = noY + btnHeight/2 - mouseY;
   const distance = Math.hypot(dx, dy);
 
-  if (distance < 150) {
-    // Move away smoothly
-    const moveX = dx / distance * 10; // speed
-    const moveY = dy / distance * 10;
-
-    let newX = btnRect.left + moveX;
-    let newY = btnRect.top + moveY;
+  if (distance < 150) { // only move if cursor is near
+    // Move away proportionally
+    const speed = 5; // adjust speed
+    noX += (dx / distance) * speed;
+    noY += (dy / distance) * speed;
 
     // Keep inside viewport
-    newX = Math.min(window.innerWidth - noBtn.offsetWidth, Math.max(0, newX));
-    newY = Math.min(window.innerHeight - noBtn.offsetHeight, Math.max(0, newY));
+    noX = Math.min(window.innerWidth - btnWidth, Math.max(0, noX));
+    noY = Math.min(window.innerHeight - btnHeight, Math.max(0, noY));
 
-    noBtn.style.left = `${newX}px`;
-    noBtn.style.top = `${newY}px`;
+    // Update position
+    noBtn.style.left = `${noX}px`;
+    noBtn.style.top = `${noY}px`;
   }
 
   requestAnimationFrame(animateNo);
@@ -132,6 +131,7 @@ yesBtn.addEventListener("click", () => {
 </script>
 </body>
 </html>
+
 
 
 
