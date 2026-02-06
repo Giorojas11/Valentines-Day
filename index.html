@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Megan, Be My Valentine 💘</title>
+<title>Be My Valentine 💘</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -36,21 +36,23 @@
     border-radius: 10px;
     cursor: pointer;
     margin: 10px;
-    position: relative;
-    z-index: 10;
+    position: absolute; /* both YES and NO positioned absolutely inside body */
     transition: transform 0.05s linear;
   }
 
   #yesBtn {
     background: #ff4d6d;
     color: white;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, -50%) scale(1);
   }
 
   #noBtn {
     background: #444;
     color: white;
-    position: absolute;
-    z-index: 20;
+    left: 60%;
+    top: 50%;
   }
 </style>
 </head>
@@ -66,21 +68,18 @@
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
 
+// YES button grows automatically
 let yesScale = 1;
-
-// YES grows automatically over time
 setInterval(() => {
-  yesScale += 0.05; // adjust growth speed
-  yesBtn.style.transform = `scale(${yesScale})`;
-}, 100); // grows every 100ms
+  yesScale += 0.05; // growth rate
+  yesBtn.style.transform = `translate(-50%, -50%) scale(${yesScale})`;
+}, 100); // every 100ms
 
-// Initialize NO button inside viewport
-let noX = window.innerWidth / 2;
-let noY = window.innerHeight / 2;
-noBtn.style.left = `${noX}px`;
-noBtn.style.top = `${noY}px`;
+// Track NO button position
+let noX = noBtn.offsetLeft;
+let noY = noBtn.offsetTop;
 
-// Track cursor
+// Track mouse
 let mouseX = 0;
 let mouseY = 0;
 document.addEventListener("mousemove", (e) => {
@@ -88,26 +87,24 @@ document.addEventListener("mousemove", (e) => {
   mouseY = e.clientY;
 });
 
-// Smoothly move NO button away from cursor
+// Animate NO button to avoid cursor
 function animateNo() {
   const btnWidth = noBtn.offsetWidth;
   const btnHeight = noBtn.offsetHeight;
 
-  const dx = noX + btnWidth/2 - mouseX;
-  const dy = noY + btnHeight/2 - mouseY;
+  const dx = (noX + btnWidth/2) - mouseX;
+  const dy = (noY + btnHeight/2) - mouseY;
   const distance = Math.hypot(dx, dy);
 
-  if (distance < 150) { // only move if cursor is near
-    // Move away proportionally
-    const speed = 5; // adjust speed
+  if (distance < 150) {
+    const speed = 5; // movement speed
     noX += (dx / distance) * speed;
     noY += (dy / distance) * speed;
 
     // Keep inside viewport
-    noX = Math.min(window.innerWidth - btnWidth, Math.max(0, noX));
-    noY = Math.min(window.innerHeight - btnHeight, Math.max(0, noY));
+    noX = Math.max(0, Math.min(window.innerWidth - btnWidth, noX));
+    noY = Math.max(0, Math.min(window.innerHeight - btnHeight, noY));
 
-    // Update position
     noBtn.style.left = `${noX}px`;
     noBtn.style.top = `${noY}px`;
   }
@@ -131,6 +128,7 @@ yesBtn.addEventListener("click", () => {
 </script>
 </body>
 </html>
+
 
 
 
