@@ -1,141 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Megan Be My Valentine 💘</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Megan Be My Valentine 💘</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-<style>
-  body {
-    margin: 0;
-    height: 100vh;
-    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-    font-family: Arial, sans-serif;
-    color: white;
-    text-align: center;
-    overflow: hidden;
-    position: relative;
-  }
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
+      overflow: hidden;
+    }
 
-  .card {
-    background: rgba(255,255,255,0.2);
-    padding: 40px;
-    border-radius: 20px;
-    position: relative;
-    display: inline-block;
-  }
+    .card {
+      background: rgba(255,255,255,0.2);
+      padding: 40px;
+      border-radius: 20px;
+      position: relative;
+    }
 
-  h1 {
-    margin-bottom: 60px; /* space for buttons */
-  }
+    button {
+      padding: 14px 24px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin: 10px;
+    }
 
-  button {
-    padding: 14px 24px;
-    font-size: 1.2em;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    position: absolute;
-    transition: transform 0.05s linear;
-  }
+    #yesBtn {
+      background: #ff4d6d;
+      color: white;
+      transition: transform 0.2s;
+    }
 
-  #yesBtn {
-    background: #ff4d6d;
-    color: white;
-    bottom: 20px; /* place YES below the header */
-    left: 50%;
-    transform: translateX(-50%) scale(1);
-    z-index: 10;
-  }
-
-  #noBtn {
-    background: #444;
-    color: white;
-    top: 60%; /* start somewhere else */
-    left: 60%;
-    z-index: 20;
-  }
-</style>
+    #noBtn {
+      background: #444;
+      color: white;
+      position: absolute;
+    }
+  </style>
 </head>
 
 <body>
-<div class="card">
-  <h1>Will you be my Valentine? 💖</h1>
-  <button id="yesBtn">Yes 💘</button>
-  <button id="noBtn">No 😤</button>
-</div>
+  <div class="card">
+    <h1>Will you be my Valentine? 💖</h1>
 
-<script>
-const yesBtn = document.getElementById("yesBtn");
-const noBtn = document.getElementById("noBtn");
+    <button id="yesBtn">Yes 💘</button>
+    <button id="noBtn">No 😤</button>
+  </div>
 
-let yesScale = 1;
-let growing = false;
+  <script>
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    let yesScale = 1;
 
-// Start YES growth on hover
-yesBtn.addEventListener("mouseenter", () => {
-  if (!growing) {
-    growing = true;
-    const growthInterval = setInterval(() => {
-      yesScale += 0.05;
-      yesBtn.style.transform = `translateX(-50%) scale(${yesScale})`;
-    }, 100);
-  }
-});
+    function teleportNo() {
+      const x = Math.random() * (window.innerWidth - 120);
+      const y = Math.random() * (window.innerHeight - 60);
 
-// NO button position
-let noX = noBtn.offsetLeft;
-let noY = noBtn.offsetTop;
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
 
-// Track mouse position
-let mouseX = 0;
-let mouseY = 0;
-document.addEventListener("mousemove", (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-});
+      yesScale += 0.15;
+      yesBtn.style.transform = `scale(${yesScale})`;
+    }
 
-// Smooth NO button movement
-function animateNo() {
-  const btnWidth = noBtn.offsetWidth;
-  const btnHeight = noBtn.offsetHeight;
+    // Works for mouse AND touch
+    noBtn.addEventListener("mouseenter", teleportNo);
+    noBtn.addEventListener("touchstart", teleportNo);
 
-  const dx = (noX + btnWidth/2) - mouseX;
-  const dy = (noY + btnHeight/2) - mouseY;
-  const distance = Math.hypot(dx, dy);
+    yesBtn.addEventListener("click", () => {
+      confetti({
+        particleCount: 160,
+        spread: 90,
+        origin: { y: 0.6 }
+      });
 
-  if (distance < 150) {
-    const speed = 5;
-    noX += (dx / distance) * speed;
-    noY += (dy / distance) * speed;
-
-    // Constrain inside viewport
-    noX = Math.max(0, Math.min(window.innerWidth - btnWidth, noX));
-    noY = Math.max(0, Math.min(window.innerHeight - btnHeight, noY));
-
-    noBtn.style.left = `${noX}px`;
-    noBtn.style.top = `${noY}px`;
-  }
-
-  requestAnimationFrame(animateNo);
-}
-animateNo();
-
-// YES click with confetti
-yesBtn.addEventListener("click", () => {
-  confetti({
-    particleCount: 160,
-    spread: 90,
-    origin: { y: 0.6 }
-  });
-
-  setTimeout(() => {
-    window.location.href = "yes.html";
-  }, 700);
-});
-</script>
+      setTimeout(() => {
+        window.location.href = "yes.html";
+      }, 700);
+    });
+  </script>
 </body>
 </html>
 
