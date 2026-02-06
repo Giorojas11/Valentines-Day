@@ -80,7 +80,65 @@ yesBtn.addEventListener("mouseenter", () => {
     growing = true;
     const growthInterval = setInterval(() => {
       yesScale += 0.05;
-      yesBtn.style.transform = `trans
+      yesBtn.style.transform = `translateX(-50%) scale(${yesScale})`;
+    }, 100);
+  }
+});
+
+// NO button position
+let noX = noBtn.offsetLeft;
+let noY = noBtn.offsetTop;
+
+// Track mouse position
+let mouseX = 0;
+let mouseY = 0;
+document.addEventListener("mousemove", (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+});
+
+// Smooth NO button movement
+function animateNo() {
+  const btnWidth = noBtn.offsetWidth;
+  const btnHeight = noBtn.offsetHeight;
+
+  const dx = (noX + btnWidth/2) - mouseX;
+  const dy = (noY + btnHeight/2) - mouseY;
+  const distance = Math.hypot(dx, dy);
+
+  if (distance < 150) {
+    const speed = 5;
+    noX += (dx / distance) * speed;
+    noY += (dy / distance) * speed;
+
+    // Constrain inside viewport
+    noX = Math.max(0, Math.min(window.innerWidth - btnWidth, noX));
+    noY = Math.max(0, Math.min(window.innerHeight - btnHeight, noY));
+
+    noBtn.style.left = `${noX}px`;
+    noBtn.style.top = `${noY}px`;
+  }
+
+  requestAnimationFrame(animateNo);
+}
+animateNo();
+
+// YES click with confetti
+yesBtn.addEventListener("click", () => {
+  confetti({
+    particleCount: 160,
+    spread: 90,
+    origin: { y: 0.6 }
+  });
+
+  setTimeout(() => {
+    window.location.href = "yes.html";
+  }, 700);
+});
+</script>
+</body>
+</html>
+
 
 
 
