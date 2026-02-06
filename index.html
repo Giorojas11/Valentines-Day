@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Megan Be My Valentine 💘</title>
+<title>Be My Valentine 💘</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -12,9 +12,6 @@
     margin: 0;
     height: 100vh;
     background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
     font-family: Arial, sans-serif;
     color: white;
     text-align: center;
@@ -27,6 +24,11 @@
     padding: 40px;
     border-radius: 20px;
     position: relative;
+    display: inline-block;
+  }
+
+  h1 {
+    margin-bottom: 60px; /* space for buttons */
   }
 
   button {
@@ -35,24 +37,25 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    margin: 10px;
-    position: absolute; /* both YES and NO positioned absolutely inside body */
+    position: absolute;
     transition: transform 0.05s linear;
   }
 
   #yesBtn {
     background: #ff4d6d;
     color: white;
+    bottom: 20px; /* place YES below the header */
     left: 50%;
-    top: 40%;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translateX(-50%) scale(1);
+    z-index: 10;
   }
 
   #noBtn {
     background: #444;
     color: white;
+    top: 60%; /* start somewhere else */
     left: 60%;
-    top: 50%;
+    z-index: 20;
   }
 </style>
 </head>
@@ -68,66 +71,17 @@
 const yesBtn = document.getElementById("yesBtn");
 const noBtn = document.getElementById("noBtn");
 
-// YES button grows automatically
 let yesScale = 1;
-setInterval(() => {
-  yesScale += 0.05; // growth rate
-  yesBtn.style.transform = `translate(-50%, -50%) scale(${yesScale})`;
-}, 100); // every 100ms
+let growing = false;
 
-// Track NO button position
-let noX = noBtn.offsetLeft;
-let noY = noBtn.offsetTop;
+// Start YES growth on hover
+yesBtn.addEventListener("mouseenter", () => {
+  if (!growing) {
+    growing = true;
+    const growthInterval = setInterval(() => {
+      yesScale += 0.05;
+      yesBtn.style.transform = `trans
 
-// Track mouse
-let mouseX = 0;
-let mouseY = 0;
-document.addEventListener("mousemove", (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-});
-
-// Animate NO button to avoid cursor
-function animateNo() {
-  const btnWidth = noBtn.offsetWidth;
-  const btnHeight = noBtn.offsetHeight;
-
-  const dx = (noX + btnWidth/2) - mouseX;
-  const dy = (noY + btnHeight/2) - mouseY;
-  const distance = Math.hypot(dx, dy);
-
-  if (distance < 150) {
-    const speed = 5; // movement speed
-    noX += (dx / distance) * speed;
-    noY += (dy / distance) * speed;
-
-    // Keep inside viewport
-    noX = Math.max(0, Math.min(window.innerWidth - btnWidth, noX));
-    noY = Math.max(0, Math.min(window.innerHeight - btnHeight, noY));
-
-    noBtn.style.left = `${noX}px`;
-    noBtn.style.top = `${noY}px`;
-  }
-
-  requestAnimationFrame(animateNo);
-}
-animateNo();
-
-// Confetti on YES click
-yesBtn.addEventListener("click", () => {
-  confetti({
-    particleCount: 160,
-    spread: 90,
-    origin: { y: 0.6 }
-  });
-
-  setTimeout(() => {
-    window.location.href = "yes.html";
-  }, 700);
-});
-</script>
-</body>
-</html>
 
 
 
